@@ -1,0 +1,10 @@
+{
+  "token": "abc",
+  "models": [
+    {
+      "name": "hieupth/triton.viencoder",
+      "ref": "v1",
+      "token": "abc"
+    }
+  ]
+}

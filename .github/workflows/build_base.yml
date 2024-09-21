@@ -1,0 +1,49 @@
+name: Base image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/build.yml"
+      - "src/buildbase.sh"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['24.12']
+    steps:
+      - 
+        name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+      - 
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Build image
+        uses: hieupth/docker-action@v3
+        with: 
+          shell: bash
+          username: ${{vars.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+          image: nvcr.io/nvidia/tensorrt:${{matrix.version}}-py3
+          options: |
+            -v ./src/buildbase.sh:/build.sh
+            -e TRITON_VERSION=${{matrix.version}}
+          run: bash /build.sh
+      -
+        name: Push image
+        run: |
+          docker tag tritonserver ${{vars.DOCKERHUB_USERNAME}}/tritonserverbuild:${{matrix.version}}
+          docker push ${{vars.DOCKERHUB_USERNAME}}/tritonserverbuild:${{matrix.version}}

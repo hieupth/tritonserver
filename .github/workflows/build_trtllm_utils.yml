@@ -1,0 +1,52 @@
+name: Tensorrt-llm util image
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Tensorrt-llm image]
+    types: [completed]
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/build_trtllm_utils.yml"
+      - "dockerfile"
+      - "scripts/*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['24.12', '25.02']
+    steps:
+      - 
+        name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+      - 
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{vars.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+      - 
+        name: Build
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          file: dockerfile
+          platforms: linux/amd64
+          tags: ${{vars.DOCKERHUB_USERNAME}}/tritonserver:${{matrix.version}}-trtllm
+          build-args: |
+            BASE=${{vars.DOCKERHUB_USERNAME}}/tritonserverbuild:${{matrix.version}}-trtllm
