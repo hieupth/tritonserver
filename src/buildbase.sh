@@ -18,4 +18,5 @@ python3 build.py \
   --backend ensemble \
   --backend python \
   --backend onnxruntime \
-  --backend tensorrt
+  --backend tensorrt \
+  --backend fil
