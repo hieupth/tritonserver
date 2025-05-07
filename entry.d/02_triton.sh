@@ -1,0 +1,1 @@
+tritonserver --model-repository=/models

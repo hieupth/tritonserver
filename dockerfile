@@ -30,7 +30,8 @@ RUN pip install --no-cache-dir \
         transformers \
         jinja2
 COPY ./entry.d /entry.d
+COPY ./entrypoint.sh /entrypoint.sh
 # Set tini.
 ENTRYPOINT ["tini", "-g", "--"]
 # Set entry command.
-CMD [ "/bin/sh", "/entry.d/entrypoint.sh" ]
+CMD [ "/bin/sh", "/entrypoint.sh" ]
