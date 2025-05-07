@@ -3,14 +3,13 @@ name: Update Description
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Buil Runtime"]
+    workflows: ["Buil image"]
     types:
       - completed
   push:
     branches:
-      - "main"
+      - main
     paths:
-      - ".github/workflows/description.yml"
       - README.md
 
 jobs:
@@ -19,16 +18,16 @@ jobs:
     steps:
     - 
       name: Login to DockerHub
-      uses: docker/login-action@v3
+      uses: docker/login-action@v2
       with:
         username: ${{vars.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_TOKEN}}
     - 
       name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
     - 
       name: Update docker description
-      uses: peter-evans/dockerhub-description@v4
+      uses: peter-evans/dockerhub-description@v2
       with:
         username: ${{vars.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_TOKEN}}
