@@ -1,18 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
-CONFIG_DIR="/entry.d"
+set -e;
 
-SCRIPTS=$(find "$CONFIG_DIR" -type f -name "*.sh" | sort)
+if [ "${RUN_INIT_SCRIPTS}" = "true" ]; then
+  bash /init.d/init.sh
+fi
 
-for script in $SCRIPTS; do
-    echo "Running: $script"
-    
-    bash "$script"
-    
-    if [ $? -ne 0 ]; then
-        echo "Error while running $script. Stopping."
-        exit 1
-    fi
-done
-
-echo "All scripts executed successfully."
+exec "$@"

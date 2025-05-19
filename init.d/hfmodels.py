@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import snapshot_download
 
 
-CONFIG = os.getenv('HF_CONFIG', '/conf.d/huggingface.json')
+CONFIG = os.getenv('HF_DOWNLOAD_CONF', '/conf.d/huggingface.json')
 TRITON_MODEL_DIR = os.getenv('TRITON_MODEL_DIR', '/models')
 
 

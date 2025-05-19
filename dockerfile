@@ -1,37 +1,28 @@
-ARG BASE=ubuntu:24.04
+ARG BASE_IMAGE=hieupth/tritonserverbuild:25.04
 
-FROM ${BASE}
-# Useful envinronment.
+FROM ${BASE_IMAGE}
+
 ENV DEBIAN_FRONTEND=noninteractive
-# Install required packages.
+
+ARG RUN_INIT_SCRIPTS=false
+ENV RUN_INIT_SCRIPTS=${RUN_INIT_SCRIPTS:-false}
+
 RUN apt-get update --yes && \
-    # Install basic packages.
     apt-get install --yes --no-install-recommends \
-        curl \
-        gnupg \
-        ca-certificates \
-        tini \
-        git \
-        # .NET dependencies.
-        libc6 \
-        libgcc-s1 \
-        libicu74 \
-        libssl3t64 \
-        libstdc++6 \
-        tzdata \
-        tzdata-legacy \
-        # Additional packages.
-        ${PACKAGES} && \
-    # Clean cache.
+      git \
+      tini \
+      curl \
+      gnupg \
+      ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-# Install python packages.
-RUN pip install --no-cache-dir \
-        huggingface_hub[hf_transfer] \
-        transformers \
-        jinja2
-COPY ./entry.d /entry.d
+
+COPY ./conf.d /conf.d
+COPY ./init.d /init.d
+COPY ./init.sh /init.sh
 COPY ./entrypoint.sh /entrypoint.sh
-# Set tini.
-ENTRYPOINT ["tini", "-g", "--"]
-# Set entry command.
-CMD [ "/bin/sh", "/entrypoint.sh" ]
+
+RUN if [ "${RUN_INIT_SCRIPTS}" = "true" ]; then \
+      bash /init.sh; \
+    fi;
+
+ENTRYPOINT ["tini", "-g", "--", "/entrypoint.sh"]

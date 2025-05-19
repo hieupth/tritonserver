@@ -7,15 +7,15 @@ on:
       - "main"
     paths:
       - ".github/workflows/build.yml"
+      - "*.d/*"
       - "dockerfile"
-      - "entry.d/*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['25.03']
+        version: ['25.04']
         variant: ['', '-cpu', '-vllm']
     steps:
       - 
