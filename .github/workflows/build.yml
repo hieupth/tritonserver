@@ -7,8 +7,11 @@ on:
       - "main"
     paths:
       - ".github/workflows/build.yml"
-      - "*.d/*"
+      - "hooks/*"
+      - "scripts/*"
       - "dockerfile"
+      - "hfmodels.json"
+      - "requirements.txt"
 
 jobs:
   build:
@@ -55,4 +58,6 @@ jobs:
           platforms: linux/amd64
           tags: ${{vars.DOCKERHUB_USERNAME}}/tritonserver:${{matrix.version}}${{matrix.variant}}
           build-args: |
-            BASE=hieupth/tritonserverbuild:${{matrix.version}}${{matrix.variant}}
+            BASE_IMG=hieupth/tritonserverbuild:${{matrix.version}}${{matrix.variant}}
+            ENABLE_HOOKS=true
+            ENABLE_PIP_INSTALL=true
